@@ -13,6 +13,7 @@ package edu.keywords.controlador;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import com.keywords.scraper.Scraper;
 
@@ -35,15 +36,17 @@ public class KeywordAutocompleteController {
 	 * @return List con los datos de cada criterio y palabra
 	 * @throws Exception
 	 */
-	public List<Video> getVideoCriterio(String keyword,  char letra) throws Exception {
+	public List<Video> getVideoCriterio(String keyword,  String letra) throws Exception {
 
 		List<Video> videos = new ArrayList<Video>();
 
-		List<String> resultadoAutocomplete = 
-				Scraper.autocompleteResults(keyword + " " + letra);
+		Scraper.iniciarDrivers();
+		
+		Set<String> resultadoAutocomplete = 
+				Scraper.autocompleteResults(keyword, letra);
 
 		for (String resultado : resultadoAutocomplete) {
-
+			
 			int numeroVideoRelacionados = Scraper.getNumeroVideos(resultado);
 
 			Video video = new Video(resultado, numeroVideoRelacionados , letra);

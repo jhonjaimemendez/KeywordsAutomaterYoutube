@@ -23,6 +23,13 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
+import java.util.logging.ConsoleHandler;
+import java.util.logging.FileHandler;
+import java.util.logging.Handler;
+import java.util.logging.Level;
+import java.util.logging.LogManager;
+import java.util.logging.Logger;
+
 
 import com.opencsv.CSVWriter;
 
@@ -49,17 +56,19 @@ import javafx.stage.StageStyle;
 public class Utilidades {
 
 	private static Rectangle2D rentangle2D;
-		
+
 	private static String rutaCSS = "fxml/css/";
 	private static String urlConfiguracionCSSAlert;
-	
+
 	private static final String SQUARE_BUBBLE =
 			"M24 1h-24v16.981h4v5.019l7-5.019h13z";
-	
+
 	private static String nombreArchivo = "salida";
-	
+
 	private static String rutaPorDefecto;
-	
+
+	private static Logger logger;
+
 
 	/**
 	 * Retorna un imagenView a partir del nombre de la imagen
@@ -196,9 +205,9 @@ public class Utilidades {
 
 	}
 
-	
 
-	
+
+
 	public static String getFechaActual() {
 
 		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd-HH-mm");  
@@ -225,47 +234,82 @@ public class Utilidades {
 		stage.initOwner(padre);
 		return stage;
 	}
-	
+
 
 	public static void escribirArchivoCSV(String ruta,String nombre, List<Video> videos) throws FileNotFoundException, IOException {
-		
+
 		String nombreArchivo = ruta + File.separator + nombre + "-" + Utilidades.getFechaActual() +  ".csv";
-		
-        try (FileOutputStream fos = new FileOutputStream(nombreArchivo);
-                OutputStreamWriter osw = new OutputStreamWriter(fos, 
-                        StandardCharsets.UTF_8);
-                CSVWriter writer = new CSVWriter(osw)) {
-        	
-        	 String[] headerRecord = {"Criterio", "Número Videos"};
-        	 writer.writeNext(headerRecord);
-            
-        	for (Video video : videos) {
-        		
-        		writer.writeNext(new String[] {video.getCriterio(), "" + video.getNumeroVideoRelacionados()});
-				
+
+		try (FileOutputStream fos = new FileOutputStream(nombreArchivo);
+				OutputStreamWriter osw = new OutputStreamWriter(fos, 
+						StandardCharsets.UTF_8);
+				CSVWriter writer = new CSVWriter(osw)) {
+
+			String[] headerRecord = {"Criterio", "Número Videos"};
+			writer.writeNext(headerRecord);
+
+			for (Video video : videos) {
+
+				writer.writeNext(new String[] {video.getCriterio(), "" + video.getNumeroVideoRelacionados()});
+
 			}
-        	
-        	
-        }   
-        
-        
-        
+
+
+		}   
+
+
+
 	}
+
+	public static Logger getLogger() {
 	
+		//Codigo tomado de la web
+		if (logger == null) {
+
+			logger = Logger.getLogger(Utilidades.class.getName());
+			try {
+				
+				LogManager.getLogManager().readConfiguration(new FileInputStream("mylogging.properties"));
+				
+			} catch (SecurityException | IOException e1) {
+				e1.printStackTrace();
+			}
+			logger.setLevel(Level.FINE);
+			logger.addHandler(new ConsoleHandler());
+			//adding custom handler
+			logger.addHandler(new MyHandler());
+			try {
+				
+				Handler fileHandler = new FileHandler("logger.log");
+				fileHandler.setFormatter(new MyFormatter());
+				//setting custom filter for FileHandler
+				fileHandler.setFilter(new MyFilter());
+				logger.addHandler(fileHandler);
+
+			} catch (SecurityException | IOException e) {
+				e.printStackTrace();
+			}
+
+		}
+
+
+		return logger;
+	}
+
 	public static String getNombreArchivo() {
 		return nombreArchivo;
 	}
-	
+
 	public static String getRutaPorDefecto() {
-		
+
 		if (rutaPorDefecto == null) {
-			
+
 			String path = new File (".").getAbsolutePath();
 			rutaPorDefecto = path.substring(0,path.length() - 1);
-		
+
 		}
-		
-		
+
+
 		return rutaPorDefecto;
 	}
 

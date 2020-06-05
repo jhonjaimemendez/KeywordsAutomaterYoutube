@@ -1,0 +1,35 @@
+14::com.keywords.vista.Principal::start::Thu Jun 04 20:57:30 COT 2020::Inicio del aplicativo
+19::com.keywords.scraper.Scraper::autocompleteResultsOpcionTres::Thu Jun 04 20:58:53 COT 2020::Error autocomplete patron 3 org.openqa.selenium.TimeoutException: Expected condition failed: waiting for element to be clickable: By.id: downloadButton (tried for 10 second(s) with 500 MILLISECONDS interval)
+Build info: version: '3.6.0', revision: '6fbf3ec767', time: '2017-09-27T15:28:36.4Z'
+System info: host: 'DESKTOP-V544TMB', ip: '192.168.56.1', os.name: 'Windows 10', os.arch: 'amd64', os.version: '10.0', java.version: '1.8.0_231'
+Driver info: org.openqa.selenium.chrome.ChromeDriver
+Capabilities [{networkConnectionEnabled=false, chrome={chromedriverVersion=83.0.4103.39 (ccbf011cb2d2b19b506d844400483861342c20cd-refs/branch-heads/4103@{#416}), userDataDir=C:\Users\JHONJ~1.MEN\AppData\Local\Temp\scoped_dir16964_963497887}, timeouts={implicit=0, pageLoad=300000, script=30000}, pageLoadStrategy=normal, unhandledPromptBehavior=dismiss and notify, strictFileInteractability=false, platform=WINDOWS, proxy=Proxy(), goog:chromeOptions={debuggerAddress=localhost:52713}, acceptInsecureCerts=false, browserVersion=83.0.4103.97, browserName=chrome, javascriptEnabled=true, platformName=WINDOWS, setWindowRect=true, webauthn:virtualAuthenticators=true}]
+Session ID: 76848f2229e9b11d91dc01794f099bc9
+19::com.keywords.scraper.Scraper::autocompleteResultsOpcionTres::Thu Jun 04 21:01:19 COT 2020::Error autocomplete patron 3 org.openqa.selenium.TimeoutException: Expected condition failed: waiting for element to be clickable: By.id: downloadButton (tried for 10 second(s) with 500 MILLISECONDS interval)
+Build info: version: '3.6.0', revision: '6fbf3ec767', time: '2017-09-27T15:28:36.4Z'
+System info: host: 'DESKTOP-V544TMB', ip: '192.168.56.1', os.name: 'Windows 10', os.arch: 'amd64', os.version: '10.0', java.version: '1.8.0_231'
+Driver info: org.openqa.selenium.chrome.ChromeDriver
+Capabilities [{networkConnectionEnabled=false, chrome={chromedriverVersion=83.0.4103.39 (ccbf011cb2d2b19b506d844400483861342c20cd-refs/branch-heads/4103@{#416}), userDataDir=C:\Users\JHONJ~1.MEN\AppData\Local\Temp\scoped_dir16964_963497887}, timeouts={implicit=0, pageLoad=300000, script=30000}, pageLoadStrategy=normal, unhandledPromptBehavior=dismiss and notify, strictFileInteractability=false, platform=WINDOWS, proxy=Proxy(), goog:chromeOptions={debuggerAddress=localhost:52713}, acceptInsecureCerts=false, browserVersion=83.0.4103.97, browserName=chrome, javascriptEnabled=true, platformName=WINDOWS, setWindowRect=true, webauthn:virtualAuthenticators=true}]
+Session ID: 76848f2229e9b11d91dc01794f099bc9
+19::com.keywords.scraper.Scraper::autocompleteResultsOpcionTres::Thu Jun 04 21:04:40 COT 2020::Error autocomplete patron 3 org.openqa.selenium.TimeoutException: Expected condition failed: waiting for element to be clickable: By.id: downloadButton (tried for 10 second(s) with 500 MILLISECONDS interval)
+Build info: version: '3.6.0', revision: '6fbf3ec767', time: '2017-09-27T15:28:36.4Z'
+System info: host: 'DESKTOP-V544TMB', ip: '192.168.56.1', os.name: 'Windows 10', os.arch: 'amd64', os.version: '10.0', java.version: '1.8.0_231'
+Driver info: org.openqa.selenium.chrome.ChromeDriver
+Capabilities [{networkConnectionEnabled=false, chrome={chromedriverVersion=83.0.4103.39 (ccbf011cb2d2b19b506d844400483861342c20cd-refs/branch-heads/4103@{#416}), userDataDir=C:\Users\JHONJ~1.MEN\AppData\Local\Temp\scoped_dir16964_963497887}, timeouts={implicit=0, pageLoad=300000, script=30000}, pageLoadStrategy=normal, unhandledPromptBehavior=dismiss and notify, strictFileInteractability=false, platform=WINDOWS, proxy=Proxy(), goog:chromeOptions={debuggerAddress=localhost:52713}, acceptInsecureCerts=false, browserVersion=83.0.4103.97, browserName=chrome, javascriptEnabled=true, platformName=WINDOWS, setWindowRect=true, webauthn:virtualAuthenticators=true}]
+Session ID: 76848f2229e9b11d91dc01794f099bc9
+19::com.keywords.scraper.Scraper::autocompleteResultsOpcionTres::Thu Jun 04 21:10:16 COT 2020::Error autocomplete patron 3 org.openqa.selenium.TimeoutException: Expected condition failed: waiting for element to be clickable: By.id: downloadButton (tried for 10 second(s) with 500 MILLISECONDS interval)
+Build info: version: '3.6.0', revision: '6fbf3ec767', time: '2017-09-27T15:28:36.4Z'
+System info: host: 'DESKTOP-V544TMB', ip: '192.168.56.1', os.name: 'Windows 10', os.arch: 'amd64', os.version: '10.0', java.version: '1.8.0_231'
+Driver info: org.openqa.selenium.chrome.ChromeDriver
+Capabilities [{networkConnectionEnabled=false, chrome={chromedriverVersion=83.0.4103.39 (ccbf011cb2d2b19b506d844400483861342c20cd-refs/branch-heads/4103@{#416}), userDataDir=C:\Users\JHONJ~1.MEN\AppData\Local\Temp\scoped_dir16964_963497887}, timeouts={implicit=0, pageLoad=300000, script=30000}, pageLoadStrategy=normal, unhandledPromptBehavior=dismiss and notify, strictFileInteractability=false, platform=WINDOWS, proxy=Proxy(), goog:chromeOptions={debuggerAddress=localhost:52713}, acceptInsecureCerts=false, browserVersion=83.0.4103.97, browserName=chrome, javascriptEnabled=true, platformName=WINDOWS, setWindowRect=true, webauthn:virtualAuthenticators=true}]
+Session ID: 76848f2229e9b11d91dc01794f099bc9
+19::com.keywords.scraper.Scraper::autocompleteResultsOpcionDos::Thu Jun 04 21:12:57 COT 2020::Error autocomplete patron 2 org.openqa.selenium.StaleElementReferenceException: stale element reference: element is not attached to the page document
+  (Session info: headless chrome=83.0.4103.97)
+For documentation on this error, please visit: http://seleniumhq.org/exceptions/stale_element_reference.html
+Build info: version: '3.6.0', revision: '6fbf3ec767', time: '2017-09-27T15:28:36.4Z'
+System info: host: 'DESKTOP-V544TMB', ip: '192.168.56.1', os.name: 'Windows 10', os.arch: 'amd64', os.version: '10.0', java.version: '1.8.0_231'
+Driver info: org.openqa.selenium.chrome.ChromeDriver
+Capabilities [{networkConnectionEnabled=false, chrome={chromedriverVersion=83.0.4103.39 (ccbf011cb2d2b19b506d844400483861342c20cd-refs/branch-heads/4103@{#416}), userDataDir=C:\Users\JHONJ~1.MEN\AppData\Local\Temp\scoped_dir16964_963497887}, timeouts={implicit=0, pageLoad=300000, script=30000}, pageLoadStrategy=normal, unhandledPromptBehavior=dismiss and notify, strictFileInteractability=false, platform=WINDOWS, proxy=Proxy(), goog:chromeOptions={debuggerAddress=localhost:52713}, acceptInsecureCerts=false, browserVersion=83.0.4103.97, browserName=chrome, javascriptEnabled=true, platformName=WINDOWS, setWindowRect=true, webauthn:virtualAuthenticators=true}]
+Session ID: 76848f2229e9b11d91dc01794f099bc9
+14::com.keywords.vista.PrincipalController$2$1::run::Thu Jun 04 21:13:25 COT 2020::EArchivo csv generado con exito
+14::com.keywords.vista.PrincipalController::lambda$0::Thu Jun 04 21:15:44 COT 2020::Desmontado Aplicativo 

@@ -1,16 +1,16 @@
 package com.keywords.vista;
 
+import static com.keywords.componentes.Utilidades.getLogger;
 import static com.keywords.componentes.Utilidades.mostrarAlerta;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -21,6 +21,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXTextField;
 import com.keywords.componentes.Utilidades;
+import com.keywords.scraper.Scraper;
 
 import edu.keywords.controlador.KeywordAutocompleteController;
 import edu.keywords.modelo.Video;
@@ -37,11 +38,15 @@ import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
+import static com.keywords.componentes.Utilidades.getLogger;
+
 
 public class PrincipalController implements Initializable {
 
 	@FXML
-	private JFXTextField  tKeywords,tCarpetaSalida,tArchivo,tArchivoSalida,tKeywordsProcesada,tLetraProcesada;
+	private JFXTextField  tKeywords,tCarpetaSalida,tArchivo,tArchivoSalida,
+	tKeywordsProcesada,tLetraProcesada,tKeywordsFaltantes,
+	tKeywordsTotales;
 
 	@FXML
 	private JFXButton bCargar,bBuscar,bLimpiar;
@@ -51,8 +56,13 @@ public class PrincipalController implements Initializable {
 
 	private Stage stagePrincipal;
 
+	private Task<Void> task;
+
 	private float valorProgressBar = 0;
 	private float incremento;
+
+	private int numeroPalabrasProcesadas;
+
 	private char letra;
 
 
@@ -102,59 +112,88 @@ public class PrincipalController implements Initializable {
 	}
 
 	@FXML
-	private void limpiar() {
+	private void limpiarCampo() {
 
 		tArchivo.setText("");
 		tKeywords.requestFocus();
 	}
 
 	@FXML
-	private void iniciar() {
+	private void terminar() {
 
+		if (task != null && task.isRunning()) {
 
-		if (!tKeywords.getText().isEmpty() && !tArchivo.getText().isEmpty()) {
+			boolean estado = task.cancel();
 
-			mostrarAlerta(AlertType.ERROR, "Debe especificar solo una keyword ó un archivo para la busqueda (Especifico los dos)");
-			tKeywords.requestFocus();
+			if (estado) {
 
-		} else if (tKeywords.getText().isEmpty() && tArchivo.getText().isEmpty()) {
+				mostrarAlerta(AlertType.INFORMATION, "Tarea cancelada exitosamente");
+				limpiarFormulario();
 
-			mostrarAlerta(AlertType.ERROR, "Debe especificar una keyword ó un archivo para la busqueda");
-			tKeywords.requestFocus();
-
-		} else if (tArchivoSalida.getText().isEmpty()) {
-
-			mostrarAlerta(AlertType.ERROR, "Debe especificar el nombre del archivo de salida");
-			tArchivoSalida.requestFocus();
-
-		} else if (!tKeywords.getText().isEmpty()) {
-
-			buscarPorKeywords();
-
-		} else if (!tArchivo.getText().isEmpty()) {
-
-			try {
-
-				buscarPorArchivo();
-
-			} catch (Exception e) {
-
-				mostrarAlerta(AlertType.ERROR, "Error " + e);
 			}
+
+		} else {
+
+			mostrarAlerta(AlertType.ERROR, "No existe ninguna tarea que se este ejecutando");
 
 		}
 
+		tKeywords.requestFocus();
+
+	}
+
+	@FXML
+	private void iniciar() {
+
+
+		if (task == null || !task.isRunning()) {
+
+			if (!tKeywords.getText().isEmpty() && !tArchivo.getText().isEmpty()) {
+
+				mostrarAlerta(AlertType.ERROR, "Debe especificar solo una keyword ó un archivo para la busqueda (Especifico los dos)");
+				tKeywords.requestFocus();
+
+			} else if (tKeywords.getText().isEmpty() && tArchivo.getText().isEmpty()) {
+
+				mostrarAlerta(AlertType.ERROR, "Debe especificar una keyword ó un archivo para la busqueda");
+				tKeywords.requestFocus();
+
+			} else if (tArchivoSalida.getText().isEmpty()) {
+
+				mostrarAlerta(AlertType.ERROR, "Debe especificar el nombre del archivo de salida");
+				tArchivoSalida.requestFocus();
+
+			} else if (!tKeywords.getText().isEmpty()) {
+
+				buscarPorKeywords();
+
+			} else if (!tArchivo.getText().isEmpty()) {
+
+				try {
+
+					buscarPorArchivo();
+
+				} catch (Exception e) {
+
+					mostrarAlerta(AlertType.ERROR, "Error " + e);
+				}
+
+			}
+
+		} else {
+
+			mostrarAlerta(AlertType.ERROR, "Debe esperar que se termine de ejecutar la tarea que se encuentra en proceso");
+		}
 
 	}
 
 
 	private void buscarPorKeywords() {
 
-
 		incremento = 1/27F;
 		valorProgressBar = incremento;
 
-		Task<Void> task = new Task<Void>() {
+		task = new Task<Void>() {
 
 			@Override 
 			public Void call() {
@@ -172,14 +211,14 @@ public class PrincipalController implements Initializable {
 								pNumeroVideos.setProgress(valorProgressBar);
 								tKeywordsProcesada.setText(tKeywords.getText());
 								tLetraProcesada.setText(""+letra);
+								tKeywordsFaltantes.setText("1");
+								tKeywordsTotales.setText("1");
 
 							}
 						});
 
-						List<Video> video = getKeywordAutocompleteController().getVideoCriterio(tKeywords.getText(),letra);
-
+						List<Video> video = getKeywordAutocompleteController().getVideoCriterio(tKeywords.getText(),"" + letra);
 						videos.addAll(video);
-
 
 					}
 
@@ -187,6 +226,7 @@ public class PrincipalController implements Initializable {
 
 				} catch (Exception e) {
 
+					getLogger().log(Level.SEVERE,  "Error en la generación del archivo a partir del archivo" + e);					
 					mostrarAlerta(AlertType.ERROR, "Error en la generación del archivo a partir del archivo" + e);
 
 				}
@@ -198,13 +238,14 @@ public class PrincipalController implements Initializable {
 		};
 
 		task.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
-			@Override
+
 			public void handle(WorkerStateEvent t) {
 
 				Platform.runLater(new Runnable() {
 
 					public void run() {
 
+						getLogger().log(Level.INFO,  "EArchivo csv generado con exito");
 						mostrarAlerta(AlertType.INFORMATION, "Archivo csv generado con exito");
 						limpiarFormulario();
 
@@ -215,9 +256,10 @@ public class PrincipalController implements Initializable {
 		});
 
 		task.setOnFailed(new EventHandler<WorkerStateEvent>() {
-			@Override
+
 			public void handle(WorkerStateEvent t) {
 
+				getLogger().log(Level.SEVERE,  "Error al general el archivo csv");
 				mostrarAlerta(AlertType.ERROR, "Error al general el archivo csv");
 				limpiarFormulario();
 			}
@@ -242,18 +284,18 @@ public class PrincipalController implements Initializable {
 			incremento = 1/27F;
 			valorProgressBar = incremento;
 
-			Task<Void> task = new Task<Void>() {
+			task = new Task<Void>() {
 
 				@Override 
 				public Void call()  {
 
 					List<Video> videos = new ArrayList<Video>();
-
-
+					numeroPalabrasProcesadas = 0;
 
 					while (iterator.hasNext()) {
 
-						Row currentRow = iterator.next();
+						final Row currentRow = iterator.next();
+						numeroPalabrasProcesadas++;
 
 						if (currentRow.getRowNum( )> 0) {
 
@@ -264,33 +306,35 @@ public class PrincipalController implements Initializable {
 							if (currentCell.getStringCellValue() != null && !currentCell.getStringCellValue().isEmpty()) {
 
 								for(letra='a'; letra<='z'; letra++) {
-									
+
 									final String keywords = currentCell.getStringCellValue();
-									
+
 									Platform.runLater(new Runnable() {
 
 										public void run() {
-											
+
 											valorProgressBar +=incremento;
 											pNumeroVideos.setProgress(valorProgressBar);
 											tKeywordsProcesada.setText(keywords);
 											tLetraProcesada.setText(""+letra);
+											tKeywordsFaltantes.setText("" + (currentRow.getRowNum( ) - 1));
+											tKeywordsProcesada.setText("" + numeroPalabrasProcesadas);
 
 										}
 									});
 
 
 									try {
-										
-										List<Video> video = getKeywordAutocompleteController().getVideoCriterio(currentCell.getStringCellValue(),letra);
-										videos.addAll(video);
-										
-									} catch (Exception e) {
-										
-										e.printStackTrace();
-										
-									}
 
+										List<Video> video = getKeywordAutocompleteController().getVideoCriterio(currentCell.getStringCellValue(),"" + letra);
+										videos.addAll(video);
+
+									} catch (Exception e) {
+
+										getLogger().log(Level.SEVERE,  "Error proceso generado por archivo" +e);
+										
+
+									}
 
 								}
 
@@ -304,9 +348,10 @@ public class PrincipalController implements Initializable {
 						Utilidades.escribirArchivoCSV(tCarpetaSalida.getText(), tArchivoSalida.getText() + "-PorArchivoKeywords", videos);
 						workbook.close();
 					} catch (Exception e) {
+
+						getLogger().log(Level.SEVERE,  "Error escriviendo el archivo en proceso generado por archivo" +e);
 						
-						e.printStackTrace();
-						
+
 					} 
 
 					return null;
@@ -314,13 +359,14 @@ public class PrincipalController implements Initializable {
 			};
 
 			task.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
-				@Override
+
 				public void handle(WorkerStateEvent t) {
 
 					Platform.runLater(new Runnable() {
 
 						public void run() {
 
+							getLogger().log(Level.INFO,  "Archivo csv generado con exito en proceso generado por archivo");
 							mostrarAlerta(AlertType.INFORMATION, "Archivo csv generado con exito");
 							limpiarFormulario();
 
@@ -331,9 +377,10 @@ public class PrincipalController implements Initializable {
 			});
 
 			task.setOnFailed(new EventHandler<WorkerStateEvent>() {
-				@Override
+
 				public void handle(WorkerStateEvent t) {
 
+					getLogger().log(Level.SEVERE,  "Error al general el archivo csv" );
 					mostrarAlerta(AlertType.ERROR, "Error al general el archivo csv");
 					limpiarFormulario();
 				}
@@ -355,9 +402,13 @@ public class PrincipalController implements Initializable {
 
 		this.stagePrincipal = stagePrincipal;
 
+		stagePrincipal.setOnCloseRequest( event -> {
+
+			Scraper.closeDriver();
+
+			getLogger().log( Level.INFO ,"Desmontado Aplicativo ");
+		});
 	}
-
-
 
 	private String mostrarExploradorArchivo() {
 
@@ -408,10 +459,12 @@ public class PrincipalController implements Initializable {
 		tArchivo.setText("");
 		tCarpetaSalida.setText(Utilidades.getRutaPorDefecto());
 		tKeywords.setText("");
+		tKeywordsFaltantes.setText("");
+		tKeywordsProcesada.setText("");
 		pNumeroVideos.setProgress(0);
+		tKeywordsTotales.setText("");
+		tLetraProcesada.setText("");
 		tKeywords.requestFocus();
-		tKeywordsProcesada.requestFocus();
-		tLetraProcesada.requestFocus();
 
 	}
 

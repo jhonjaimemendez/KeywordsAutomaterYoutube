@@ -21,10 +21,10 @@ public class Video {
 	
 	private String criterio;
 	private int numeroVideoRelacionados;
-	private char letra; //Letra por la cual se esta buscando el criterio
+	private String letra; //Letra por la cual se esta buscando el criterio
 	
 	
-	public Video(String criterio, int numeroVideoRelacionados, char letra) {
+	public Video(String criterio, int numeroVideoRelacionados, String letra) {
 		
 		this.criterio = criterio;
 		this.numeroVideoRelacionados = numeroVideoRelacionados;
@@ -42,7 +42,7 @@ public class Video {
 	}
 
 
-	public char getLetra() {
+	public String getLetra() {
 		return letra;
 	}
 	

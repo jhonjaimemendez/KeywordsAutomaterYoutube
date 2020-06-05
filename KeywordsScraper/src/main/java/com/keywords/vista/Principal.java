@@ -17,6 +17,7 @@ import static com.keywords.componentes.Utilidades.getImage;
 import static com.keywords.componentes.Utilidades.getRutaCSS;
 import static com.keywords.componentes.Utilidades.setRectangle2D;
 import static com.keywords.componentes.Utilidades.setUrlConfiguracionCSSAlert;
+import static com.keywords.componentes.Utilidades.getLogger;
 
 import java.io.IOException;
 import java.net.URL;
@@ -53,8 +54,8 @@ public class Principal extends Application {
 			stage.initStyle(StageStyle.UNIFIED);
 
 			Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
-			stage.setX((screenBounds.getWidth() - 750) / 2);
-			stage.setY((screenBounds.getHeight() - 500) / 2);
+			stage.setX((screenBounds.getWidth() - 800) / 2);
+			stage.setY((screenBounds.getHeight() - 600) / 2);
 
 			Scene scene = new Scene(primeraEscena);
 			stage.setScene(scene);
@@ -66,10 +67,12 @@ public class Principal extends Application {
 			setRectangle2D(screenBounds);
 
 			configurarParametros();
-
+			
+			getLogger().log(Level.INFO, "Inicio del aplicativo");
+			
 		} catch (Exception e) {
 
-			Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "Error: ", e);
+			getLogger().log(Level.SEVERE, "Error al incial" + e);
 		}
 	}
 
