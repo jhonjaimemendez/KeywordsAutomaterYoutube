@@ -66,8 +66,88 @@
 			<version>3.6.0</version>
 		</dependency>
 
-		
-
-
 	</dependencies>
+	
+	<build>
+		<finalName>AutocompleteYoutube</finalName>
+	
+	<resources>
+      <resource>
+        <directory>src/main/java</directory>
+        <includes>
+          <include>**/*.*</include>
+          
+        </includes>
+      </resource>  
+    </resources>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-eclipse-plugin</artifactId>
+				<version>2.9</version>
+				<configuration>
+					<downloadSources>true</downloadSources>
+					<downloadJavadocs>false</downloadJavadocs>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.8.1</version>
+				<configuration>
+					<source>1.8</source>
+					<target>1.8</target>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-assembly-plugin</artifactId>
+
+				<configuration>
+					<descriptorRefs>
+						<descriptorRef>jar-with-dependencies</descriptorRef>
+					</descriptorRefs>
+
+					<archive>
+						<manifest>
+							<addClasspath>true</addClasspath>
+							<mainClass>com.keywords.vista.Principal</mainClass>
+							<classpathPrefix>lib/</classpathPrefix>
+						</manifest>
+					</archive>
+				</configuration>
+				<executions>
+					<execution>
+						<id>make-assembly</id>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			
+			<!-- Copy project dependency -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<version>3.1.2</version>
+				<executions>
+				  <execution>
+					<id>copy-dependencies</id>
+					<phase>package</phase>
+					<goals>
+						<goal>copy-dependencies</goal>
+					</goals>
+					<configuration>
+					  <!-- exclude junit, we need runtime dependency only -->
+					  <includeScope>runtime</includeScope>
+					  <outputDirectory>${project.build.directory}/lib/</outputDirectory>
+					</configuration>
+				  </execution>
+				</executions>
+			</plugin>
+			
+		</plugins>
+	</build>
 </project>

@@ -245,7 +245,7 @@ public class Utilidades {
 						StandardCharsets.UTF_8);
 				CSVWriter writer = new CSVWriter(osw)) {
 
-			String[] headerRecord = {"Criterio", "Número Videos"};
+			String[] headerRecord = {"Criterio", "Numero Videos"};
 			writer.writeNext(headerRecord);
 
 			for (Video video : videos) {
@@ -269,7 +269,7 @@ public class Utilidades {
 			logger = Logger.getLogger(Utilidades.class.getName());
 			try {
 				
-				LogManager.getLogManager().readConfiguration(new FileInputStream("mylogging.properties"));
+				LogManager.getLogManager().readConfiguration(new FileInputStream("recursos/mylogging.properties"));
 				
 			} catch (SecurityException | IOException e1) {
 				e1.printStackTrace();
@@ -280,7 +280,7 @@ public class Utilidades {
 			logger.addHandler(new MyHandler());
 			try {
 				
-				Handler fileHandler = new FileHandler("logger.log");
+				Handler fileHandler = new FileHandler("log/logger"+ getFechaActual()+".log");
 				fileHandler.setFormatter(new MyFormatter());
 				//setting custom filter for FileHandler
 				fileHandler.setFilter(new MyFilter());

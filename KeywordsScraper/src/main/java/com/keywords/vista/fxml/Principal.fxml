@@ -138,7 +138,7 @@
                            </font>
                         </Label>
                         <JFXTextField fx:id="tKeywordsTotales" alignment="CENTER" disable="true" focusColor="#ff3d30" maxWidth="1.7976931348623157E308" prefWidth="60.0" unFocusColor="#ff5522" HBox.hgrow="ALWAYS" />
-                        <Label prefHeight="20.0" prefWidth="130.0" text="Keywords Faltantes" textAlignment="RIGHT" textFill="#d84315">
+                        <Label prefHeight="20.0" prefWidth="140.0" text="Keywords Procesadas" textAlignment="RIGHT" textFill="#d84315">
                            <font>
                               <Font name="System Bold" size="13.0" />
                            </font>
@@ -166,7 +166,20 @@
       						<Font name="System Bold" size="14.0" />
       					</font>
       				</JFXButton>
-                  <JFXButton fx:id="bCancelar" buttonType="RAISED" layoutX="10.0" layoutY="10.0" onAction="#terminar" prefHeight="30.0" prefWidth="217.0" style="-fx-background-color: #424242;" text="Cancelar" textAlignment="CENTER" textFill="#d84315">
+                  <JFXButton fx:id="bCancelar" buttonType="RAISED" layoutX="10.0" layoutY="10.0" onAction="#terminar" prefHeight="30.0" prefWidth="217.0" style="-fx-background-color: #424242;" text="_Cancelar" textAlignment="CENTER" textFill="#d84315">
+                     <font>
+                        <Font name="System Bold" size="14.0" />
+                     </font>
+                     <ripplerFill>
+                        <RadialGradient centerX="0.5" centerY="0.5" radius="0.5">
+                           <stops>
+                              <Stop color="BLACK" />
+                              <Stop color="WHITE" offset="1.0" />
+                           </stops>
+                        </RadialGradient>
+                     </ripplerFill>
+                  </JFXButton>
+                  <JFXButton fx:id="bSalir" buttonType="RAISED" layoutX="430.0" layoutY="32.0" onAction="#cerrarAplicacion" prefHeight="30.0" prefWidth="217.0" style="-fx-background-color: #424242;" text="_Salir" textAlignment="CENTER" textFill="#d84315">
                      <font>
                         <Font name="System Bold" size="14.0" />
                      </font>

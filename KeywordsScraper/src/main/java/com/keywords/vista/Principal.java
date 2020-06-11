@@ -14,15 +14,14 @@
 package com.keywords.vista;
 
 import static com.keywords.componentes.Utilidades.getImage;
+import static com.keywords.componentes.Utilidades.getLogger;
 import static com.keywords.componentes.Utilidades.getRutaCSS;
 import static com.keywords.componentes.Utilidades.setRectangle2D;
 import static com.keywords.componentes.Utilidades.setUrlConfiguracionCSSAlert;
-import static com.keywords.componentes.Utilidades.getLogger;
 
 import java.io.IOException;
 import java.net.URL;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;

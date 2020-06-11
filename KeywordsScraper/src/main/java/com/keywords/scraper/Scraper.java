@@ -73,9 +73,12 @@ public class Scraper {
 		Set<String> resultado = autocompleteResultsOpcionUno(keyword,letra);
 		Set<String> resultado1 = autocompleteResultsOpcionDos(keyword,letra);
 		Set<String> resultado2 = autocompleteResultsOpcionTres(keyword,letra);
+		
 
 		resultado.addAll(resultado1);
 		resultado.addAll(resultado2);
+		
+		
 
 		return resultado;
 
@@ -97,9 +100,14 @@ public class Scraper {
 		Response response = Jsoup.connect(url + URLEncoder.encode(keyword + " " + letra, "UTF-8")).execute();
 		Matcher matcher = Pattern.compile(regex, Pattern.DOTALL).matcher(response.body());
 
-		while (matcher.find()) 
 
-			resultado.add(matcher.group(1));
+		while (matcher.find()) { 
+
+			if (isValidaAutocomplete(keyword,  matcher.group(1),letra))
+
+				resultado.add(matcher.group(1));
+
+		}	
 
 		return resultado;
 	}
@@ -134,7 +142,8 @@ public class Scraper {
 
 			for (int i = 1; i < links.size(); i++) {
 
-				resultado.add(links.get(i).getText());
+				if (isValidaAutocomplete(keyword , links.get(i).getText(), letra))
+					resultado.add(links.get(i).getText());
 			}
 
 			input.clear();
@@ -162,20 +171,31 @@ public class Scraper {
 
 		try {
 
-			resultado = getAutocompleteOpcionTres(driver, keyword, letra);
+			if (keyword.split(" ").length == 1) {
+			
+				resultado = getAutocompleteOpcionTres(driver, keyword, letra);
+			}
 
 		} catch (Exception e) {
 
 			getLogger().log( Level.SEVERE ,"Error autocomplete patron 3 " + e);
-		
+
 		}
 
 		return resultado == null ? new HashSet<String>() : resultado;
 
 	}
 
+	/**
+	 * Metodo dos de autocomplte 
+	 * @param driver
+	 * @param keyword
+	 * @param letra
+	 * @return
+	 * @throws Exception
+	 */
 	public static Set<String> getAutocompleteOpcionTres(WebDriver driver,
-			String palabra, String letra) throws Exception {
+			String keyword, String letra) throws Exception {
 
 		String keyWords ="input[id=keywordInput]";
 
@@ -186,7 +206,7 @@ public class Scraper {
 		WebDriverWait wait = new WebDriverWait(driver, 10);
 		WebElement input = wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector(keyWords)));
 
-		input.sendKeys(palabra + " " + letra );
+		input.sendKeys(keyword + " " + letra );
 		driver.findElement(By.id("keywordButton")).click();
 		wait.until(ExpectedConditions.elementToBeClickable(By.id("keywordButton")));
 		wait.until(ExpectedConditions.elementToBeClickable(By.id("downloadButton")));
@@ -200,9 +220,10 @@ public class Scraper {
 
 				String[] autocompletes = webElement.getText().split("\n");
 
-				for (String sentencias : autocompletes) {
-					if (sentencias.length() > 1)
-						resultado.add(sentencias);
+				for (String autocomplete : autocompletes) {
+
+					if (autocomplete.length() > 1 && isValidaAutocomplete(keyword , autocomplete,letra))
+						resultado.add(autocomplete);
 				}
 
 			}
@@ -246,16 +267,58 @@ public class Scraper {
 
 	}
 
-	private static boolean isCriterioContieneTodasPalabraTitulo(String criterio, String titulo) {
+	private static boolean isValidaAutocomplete(String keyword, String autocomplete,String letra) {
 
-		String pattern = "\\b"+criterio.toLowerCase()+"\\b";
+		boolean resultado = false;
 
-		Pattern p=Pattern.compile(pattern);
+		if (!(keyword+ " " + letra).equalsIgnoreCase(autocomplete)) {
 
-		Matcher m=p.matcher(titulo.toLowerCase());
+			String[] keywords = keyword.toLowerCase().split(" ");
+
+			int i = 0;
+
+			do {
+
+				if (autocomplete.toLowerCase().contains(keywords[i]))
+
+					resultado = true;
+
+				else
+
+					i++;
+
+			} while (i < keywords.length && !resultado);
+
+		}
+		return resultado;
+
+	}
+
+	private static boolean isCriterioContieneTodasPalabraTitulo(String keyword, String titulo) {
 
 
-		return m.find();
+
+		boolean resultado = true;
+
+
+		String[] keywords = keyword.toLowerCase().split(" ");
+
+		int i = 0;
+
+		do {
+
+			if (!titulo.toLowerCase().contains(keywords[i]))
+
+				resultado = false;
+
+			else
+
+				i++;
+
+		} while (i < keywords.length && resultado);
+
+
+		return resultado;
 
 
 	}
@@ -336,7 +399,7 @@ public class Scraper {
 		} catch (Exception e) {
 
 			getLogger().log( Level.SEVERE ,"Error busqueda con proxys anonimos " + e);
-		
+
 		}
 
 		driver.close();

@@ -12,13 +12,13 @@
 package edu.keywords.controlador;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import com.keywords.scraper.Scraper;
 
 import edu.keywords.modelo.Video;
-import javafx.scene.control.ProgressBar;
 
 /**
  * 
@@ -28,7 +28,7 @@ import javafx.scene.control.ProgressBar;
 
 public class KeywordAutocompleteController {
 
-	ProgressBar pNumeroVideos;
+	private Set<String> autoCompleteSearch;
 
 	/**
 	 * 
@@ -41,20 +41,32 @@ public class KeywordAutocompleteController {
 		List<Video> videos = new ArrayList<Video>();
 
 		Scraper.iniciarDrivers();
-		
+
 		Set<String> resultadoAutocomplete = 
 				Scraper.autocompleteResults(keyword, letra);
 
-		for (String resultado : resultadoAutocomplete) {
-			
-			int numeroVideoRelacionados = Scraper.getNumeroVideos(resultado);
 
-			Video video = new Video(resultado, numeroVideoRelacionados , letra);
-			videos.add(video);
+		for (String resultado : resultadoAutocomplete) {
+
+			if (autoCompleteSearch.add(resultado.toLowerCase())) {
+
+				int numeroVideoRelacionados = Scraper.getNumeroVideos(resultado);
+
+				Video video = new Video(resultado, numeroVideoRelacionados , letra);
+				videos.add(video);
+
+			}
 
 		}
 
+
 		return videos;
+	}
+
+	public void iniciarSet() {
+
+		autoCompleteSearch = new HashSet<String>();
+
 	}
 
 

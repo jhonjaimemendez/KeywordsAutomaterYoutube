@@ -123,12 +123,21 @@ public class PrincipalController implements Initializable {
 
 		if (task != null && task.isRunning()) {
 
-			boolean estado = task.cancel();
+			mostrarAlerta(AlertType.INFORMATION, "Tarea cancelada exitosamente");
 
-			if (estado) {
+			boolean opcion = mostrarAlerta(AlertType.CONFIRMATION,
+					" ¿Desea cancelar la tarea en ejecución?");
 
-				mostrarAlerta(AlertType.INFORMATION, "Tarea cancelada exitosamente");
-				limpiarFormulario();
+			if (opcion) {
+
+				boolean estado = task.cancel();
+
+				if (estado) {
+
+					mostrarAlerta(AlertType.INFORMATION, "Tarea cancelada exitosamente");
+					limpiarFormulario();
+
+				}
 
 			}
 
@@ -139,6 +148,13 @@ public class PrincipalController implements Initializable {
 		}
 
 		tKeywords.requestFocus();
+
+	}
+
+	@FXML
+	private void cerrarAplicacion() {
+
+		cerrar();
 
 	}
 
@@ -164,7 +180,7 @@ public class PrincipalController implements Initializable {
 				tArchivoSalida.requestFocus();
 
 			} else if (!tKeywords.getText().isEmpty()) {
-
+				
 				buscarPorKeywords();
 
 			} else if (!tArchivo.getText().isEmpty()) {
@@ -192,6 +208,7 @@ public class PrincipalController implements Initializable {
 
 		incremento = 1/27F;
 		valorProgressBar = incremento;
+		getKeywordAutocompleteController().iniciarSet();
 
 		task = new Task<Void>() {
 
@@ -270,8 +287,30 @@ public class PrincipalController implements Initializable {
 		th.start();
 	}
 
+	private void cerrar() {
+
+		if (task != null && task.isRunning()) {
+
+			boolean opcion = mostrarAlerta(AlertType.CONFIRMATION,
+					"Aun se esta ejecutando una tarea. Desea cerrar el aplicativo");
+
+			if (opcion) {
+
+				stagePrincipal.close();
+				getLogger().log( Level.INFO ,"Desmontado Aplicativo ");
+
+			}
+		} else
+
+			stagePrincipal.close();
+
+	}
+
+
 	private void buscarPorArchivo() throws Exception {
 
+		getKeywordAutocompleteController().iniciarSet();
+		
 		FileInputStream excelFile = new FileInputStream(new File(tArchivo.getText()));
 		final Workbook workbook = new XSSFWorkbook(excelFile);
 
@@ -317,8 +356,9 @@ public class PrincipalController implements Initializable {
 											pNumeroVideos.setProgress(valorProgressBar);
 											tKeywordsProcesada.setText(keywords);
 											tLetraProcesada.setText(""+letra);
-											tKeywordsFaltantes.setText("" + (currentRow.getRowNum( ) - 1));
-											tKeywordsProcesada.setText("" + numeroPalabrasProcesadas);
+											tKeywordsFaltantes.setText("" + (currentRow.getRowNum() -1));
+											tKeywordsTotales.setText("" + numeroPalabrasProcesadas);
+											pNumeroVideos.setProgress(0);
 
 										}
 									});
@@ -327,12 +367,13 @@ public class PrincipalController implements Initializable {
 									try {
 
 										List<Video> video = getKeywordAutocompleteController().getVideoCriterio(currentCell.getStringCellValue(),"" + letra);
+										
 										videos.addAll(video);
 
 									} catch (Exception e) {
 
 										getLogger().log(Level.SEVERE,  "Error proceso generado por archivo" +e);
-										
+
 
 									}
 
@@ -350,7 +391,7 @@ public class PrincipalController implements Initializable {
 					} catch (Exception e) {
 
 						getLogger().log(Level.SEVERE,  "Error escriviendo el archivo en proceso generado por archivo" +e);
-						
+
 
 					} 
 
@@ -404,9 +445,8 @@ public class PrincipalController implements Initializable {
 
 		stagePrincipal.setOnCloseRequest( event -> {
 
-			Scraper.closeDriver();
+			cerrar();
 
-			getLogger().log( Level.INFO ,"Desmontado Aplicativo ");
 		});
 	}
 
@@ -451,6 +491,8 @@ public class PrincipalController implements Initializable {
 		if (keywordAutocompleteController == null)
 			keywordAutocompleteController = new KeywordAutocompleteController();
 
+		
+		
 		return keywordAutocompleteController;
 	}
 
