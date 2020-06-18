@@ -41,6 +41,8 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import edu.keywords.modelo.ProxyAnonimo;
 import static com.keywords.componentes.Utilidades.getLogger;
+import static com.keywords.componentes.Utilidades.getPalabras;
+
 
 /**
  * 
@@ -74,10 +76,8 @@ public class Scraper {
 		Set<String> resultado1 = autocompleteResultsOpcionDos(keyword,letra);
 		Set<String> resultado2 = autocompleteResultsOpcionTres(keyword,letra);
 		
-
 		resultado.addAll(resultado1);
 		resultado.addAll(resultado2);
-		
 		
 
 		return resultado;
@@ -249,6 +249,7 @@ public class Scraper {
 		String query = "allintitle:\"" + criterio + "\"";
 
 		Document doc = Jsoup.connect(url)
+				.timeout(10000)
 				.data("search_query", query)
 				.userAgent("Mozilla/5.0")
 				.get();
@@ -278,14 +279,13 @@ public class Scraper {
 			int i = 0;
 
 			do {
-
-				if (autocomplete.toLowerCase().contains(keywords[i]))
+				
+				if (!getPalabras().contains(keywords[i])  
+						&& autocomplete.toLowerCase().contains(keywords[i]))
 
 					resultado = true;
-
-				else
-
-					i++;
+				
+				i++;
 
 			} while (i < keywords.length && !resultado);
 
@@ -307,6 +307,7 @@ public class Scraper {
 
 		do {
 
+			
 			if (!titulo.toLowerCase().contains(keywords[i]))
 
 				resultado = false;
@@ -314,6 +315,8 @@ public class Scraper {
 			else
 
 				i++;
+			
+			
 
 		} while (i < keywords.length && resultado);
 

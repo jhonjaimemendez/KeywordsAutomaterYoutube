@@ -2,6 +2,7 @@ package com.keywords.vista;
 
 import static com.keywords.componentes.Utilidades.getLogger;
 import static com.keywords.componentes.Utilidades.mostrarAlerta;
+import static com.keywords.componentes.Utilidades.getPalabrasSinTilde;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -21,7 +22,6 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXTextField;
 import com.keywords.componentes.Utilidades;
-import com.keywords.scraper.Scraper;
 
 import edu.keywords.controlador.KeywordAutocompleteController;
 import edu.keywords.modelo.Video;
@@ -37,8 +37,6 @@ import javafx.scene.image.ImageView;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-
-import static com.keywords.componentes.Utilidades.getLogger;
 
 
 public class PrincipalController implements Initializable {
@@ -234,7 +232,7 @@ public class PrincipalController implements Initializable {
 							}
 						});
 
-						List<Video> video = getKeywordAutocompleteController().getVideoCriterio(tKeywords.getText(),"" + letra);
+						List<Video> video = getKeywordAutocompleteController().getVideoCriterio(getPalabrasSinTilde(tKeywords.getText()),"" + letra);
 						videos.addAll(video);
 
 					}
@@ -366,7 +364,7 @@ public class PrincipalController implements Initializable {
 
 									try {
 
-										List<Video> video = getKeywordAutocompleteController().getVideoCriterio(currentCell.getStringCellValue(),"" + letra);
+										List<Video> video = getKeywordAutocompleteController().getVideoCriterio(getPalabrasSinTilde(currentCell.getStringCellValue()),"" + letra);
 										
 										videos.addAll(video);
 

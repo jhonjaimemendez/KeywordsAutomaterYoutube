@@ -21,15 +21,16 @@ import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Scanner;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.FileHandler;
 import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
-
 
 import com.opencsv.CSVWriter;
 
@@ -59,15 +60,18 @@ public class Utilidades {
 
 	private static String rutaCSS = "fxml/css/";
 	private static String urlConfiguracionCSSAlert;
-
+	private static String archivoPalabrasProposiciones  = "recursos/palabras.dat";
+	private static String nombreArchivo = "salida";
+	private static String rutaPorDefecto;
 	private static final String SQUARE_BUBBLE =
 			"M24 1h-24v16.981h4v5.019l7-5.019h13z";
 
-	private static String nombreArchivo = "salida";
+	private static List<String> palabras;
 
-	private static String rutaPorDefecto;
 
 	private static Logger logger;
+
+
 
 
 	/**
@@ -257,20 +261,18 @@ public class Utilidades {
 
 		}   
 
-
-
 	}
 
 	public static Logger getLogger() {
-	
+
 		//Codigo tomado de la web
 		if (logger == null) {
 
 			logger = Logger.getLogger(Utilidades.class.getName());
 			try {
-				
+
 				LogManager.getLogManager().readConfiguration(new FileInputStream("recursos/mylogging.properties"));
-				
+
 			} catch (SecurityException | IOException e1) {
 				e1.printStackTrace();
 			}
@@ -279,7 +281,7 @@ public class Utilidades {
 			//adding custom handler
 			logger.addHandler(new MyHandler());
 			try {
-				
+
 				Handler fileHandler = new FileHandler("log/logger"+ getFechaActual()+".log");
 				fileHandler.setFormatter(new MyFormatter());
 				//setting custom filter for FileHandler
@@ -312,5 +314,50 @@ public class Utilidades {
 
 		return rutaPorDefecto;
 	}
+
+
+	public static String getPalabrasSinTilde(String oracion) {
+
+		return oracion.replaceAll("á", "a").
+				replaceAll("é", "e").
+				replaceAll("í", "i").
+				replaceAll("ó", "o").
+				replaceAll("ú", "u");
+
+	}
+
+
+	public static List<String> getPalabras() {
+	
+		if (palabras == null) {
+			
+			try {
+
+				File file = new File(archivoPalabrasProposiciones);
+				Scanner scanner = new Scanner(file);
+
+				palabras = new ArrayList<String>();
+
+				while (scanner.hasNextLine()) {
+
+					String palabra = scanner.nextLine();
+
+					palabras.add(palabra.trim());
+
+				}
+				scanner.close();
+				
+			} catch (FileNotFoundException e) {
+
+				getLogger().log( Level.SEVERE ,"Error en archivo de preposiciones: " + e);
+				palabras = new ArrayList<String>();
+			}
+			
+		}
+
+		return palabras;
+
+	}
+
 
 }

@@ -68,6 +68,7 @@ public class Principal extends Application {
 			configurarParametros();
 			
 			getLogger().log(Level.INFO, "Inicio del aplicativo");
+	
 			
 		} catch (Exception e) {
 
@@ -86,3 +87,4 @@ public class Principal extends Application {
 		Application.launch(args);
 	}
 }
+
