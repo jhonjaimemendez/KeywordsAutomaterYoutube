@@ -179,7 +179,7 @@ public class PrincipalController implements Initializable {
 
 			} else if (!tKeywords.getText().isEmpty()) {
 				
-				buscarPorKeywords();
+				buscarPorKeywords(tKeywords.getText());
 
 			} else if (!tArchivo.getText().isEmpty()) {
 
@@ -202,7 +202,7 @@ public class PrincipalController implements Initializable {
 	}
 
 
-	private void buscarPorKeywords() {
+	private void buscarPorKeywords(String keyword) {
 
 		incremento = 1/27F;
 		valorProgressBar = incremento;
@@ -232,7 +232,7 @@ public class PrincipalController implements Initializable {
 							}
 						});
 
-						List<Video> video = getKeywordAutocompleteController().getVideoCriterio(getPalabrasSinTilde(tKeywords.getText()),"" + letra);
+						List<Video> video = getKeywordAutocompleteController().getVideoCriterio(getPalabrasSinTilde(keyword),"" + letra);
 						videos.addAll(video);
 
 					}
@@ -342,10 +342,9 @@ public class PrincipalController implements Initializable {
 
 							if (currentCell.getStringCellValue() != null && !currentCell.getStringCellValue().isEmpty()) {
 
-								for(letra='a'; letra<='z'; letra++) {
-
+								
 									final String keywords = currentCell.getStringCellValue();
-
+									
 									Platform.runLater(new Runnable() {
 
 										public void run() {
@@ -353,7 +352,6 @@ public class PrincipalController implements Initializable {
 											valorProgressBar +=incremento;
 											pNumeroVideos.setProgress(valorProgressBar);
 											tKeywordsProcesada.setText(keywords);
-											tLetraProcesada.setText(""+letra);
 											tKeywordsFaltantes.setText("" + (currentRow.getRowNum() -1));
 											tKeywordsTotales.setText("" + numeroPalabrasProcesadas);
 											pNumeroVideos.setProgress(0);
@@ -364,7 +362,7 @@ public class PrincipalController implements Initializable {
 
 									try {
 
-										List<Video> video = getKeywordAutocompleteController().getVideoCriterio(getPalabrasSinTilde(currentCell.getStringCellValue()),"" + letra);
+										List<Video> video = getKeywordAutocompleteController().getVideoCriterio(getPalabrasSinTilde(currentCell.getStringCellValue()));
 										
 										videos.addAll(video);
 
@@ -372,10 +370,7 @@ public class PrincipalController implements Initializable {
 
 										getLogger().log(Level.SEVERE,  "Error proceso generado por archivo" +e);
 
-
 									}
-
-								}
 
 							}
 						}
@@ -386,9 +381,10 @@ public class PrincipalController implements Initializable {
 					try {
 						Utilidades.escribirArchivoCSV(tCarpetaSalida.getText(), tArchivoSalida.getText() + "-PorArchivoKeywords", videos);
 						workbook.close();
+
 					} catch (Exception e) {
 
-						getLogger().log(Level.SEVERE,  "Error escriviendo el archivo en proceso generado por archivo" +e);
+						getLogger().log(Level.SEVERE,  "Error escribiendo el archivo en proceso generado por archivo" +e);
 
 
 					} 

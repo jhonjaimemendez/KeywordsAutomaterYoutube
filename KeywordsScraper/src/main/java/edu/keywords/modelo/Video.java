@@ -18,19 +18,27 @@ package edu.keywords.modelo;
  */
 
 public class Video {
-	
+
 	private String criterio;
 	private int numeroVideoRelacionados;
 	private String letra; //Letra por la cual se esta buscando el criterio
-	
-	
+	private String keywords;
+
+
 	public Video(String criterio, int numeroVideoRelacionados, String letra) {
-		
+
 		this.criterio = criterio;
 		this.numeroVideoRelacionados = numeroVideoRelacionados;
 		this.letra = letra;
 	}
 
+	public Video(String criterio, int numeroVideoRelacionados, String letra,String keywords) {
+
+		this.criterio = criterio;
+		this.numeroVideoRelacionados = numeroVideoRelacionados;
+		this.letra = letra;
+		this.keywords = keywords;
+	}
 
 	public String getCriterio() {
 		return  criterio;
@@ -46,9 +54,13 @@ public class Video {
 		return letra;
 	}
 	
+	public String getKeywords() {
+		return keywords;
+	}
+
 	@Override
 	public String toString() {
-	
+
 		return "Criterio: " + criterio + " " +" Numero Videos: " + numeroVideoRelacionados;
 	}
 }

@@ -52,7 +52,7 @@ public class KeywordAutocompleteController {
 
 				int numeroVideoRelacionados = Scraper.getNumeroVideos(resultado);
 
-				Video video = new Video(resultado, numeroVideoRelacionados , letra);
+				Video video = new Video(resultado, numeroVideoRelacionados , letra,keyword);
 				videos.add(video);
 
 			}
@@ -62,6 +62,42 @@ public class KeywordAutocompleteController {
 
 		return videos;
 	}
+
+	/**
+	 * 
+	 * @param keyword: Criterio de busqueda
+	 * @return List con los datos de cada criterio y palabra
+	 * @throws Exception
+	 */
+	public List<Video> getVideoCriterio(String keyword) throws Exception {
+
+		List<Video> videos = new ArrayList<Video>();
+
+		Scraper.iniciarDrivers();
+
+		Set<String> resultadoAutocomplete = 
+				Scraper.autocompleteResults(keyword, "");
+
+
+		resultadoAutocomplete.add(keyword);
+		
+		for (String resultado : resultadoAutocomplete) {
+
+			if (autoCompleteSearch.add(resultado.toLowerCase())) {
+
+				int numeroVideoRelacionados = Scraper.getNumeroVideos(resultado);
+
+				Video video = new Video(resultado, numeroVideoRelacionados , "",keyword);
+				videos.add(video);
+
+			}
+
+		}
+
+
+		return videos;
+	}
+
 
 	public void iniciarSet() {
 

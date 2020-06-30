@@ -249,12 +249,12 @@ public class Utilidades {
 						StandardCharsets.UTF_8);
 				CSVWriter writer = new CSVWriter(osw)) {
 
-			String[] headerRecord = {"Criterio", "Numero Videos"};
+			String[] headerRecord = {"Keywords Original","Keywords Generadas", "Numero Videos"};
 			writer.writeNext(headerRecord);
 
 			for (Video video : videos) {
 
-				writer.writeNext(new String[] {video.getCriterio(), "" + video.getNumeroVideoRelacionados()});
+				writer.writeNext(new String[] {video.getKeywords(),video.getCriterio(), "" + video.getNumeroVideoRelacionados()});
 
 			}
 

@@ -13,6 +13,8 @@
 package com.keywords.scraper;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -371,6 +373,30 @@ public class Scraper {
 		return proxysAnonimos;
 
 	}
+	
+	public static void getKeywordNumeroConsultas(String search) throws Exception {
+		
+		String google = "http://www.google.com/search?q=";
+		String charset = "UTF-8";
+		String userAgent = "Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:47.0) Gecko/20100101 Firefox/47.0";
+
+		Elements links = Jsoup.connect(google + URLEncoder.encode(search, charset)).userAgent(userAgent).get().select(".g>.r>a");
+
+		for (Element link : links) {
+		    String title = link.text();
+		    String url = link.absUrl("href"); // Google returns URLs in format "http://www.google.com/url?q=<url>&sa=U&ei=<someKey>".
+		    url = URLDecoder.decode(url.substring(url.indexOf('=') + 1, url.indexOf('&')), "UTF-8");
+
+		    if (!url.startsWith("http")) {
+		        continue; // Ads/news/etc.
+		    }
+
+		    System.out.println("Title: " + title);
+		    System.out.println("URL: " + url);
+		}
+		
+	}
+	
 
 	public static Set<String>  buscarOpcionConProxyAnonimos(String palabra, String letra) {
 
