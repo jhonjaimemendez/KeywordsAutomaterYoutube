@@ -20,24 +20,46 @@ package edu.keywords.modelo;
 public class Video {
 
 	private String criterio;
+	private int numeroVideo;
 	private int numeroVideoRelacionados;
 	private String letra; //Letra por la cual se esta buscando el criterio
 	private String keywords;
+	private String datoSegundaColumnaExcel;
+	private String datoTerceraColumnaExcel;
+	private String datoCuartaColumnaExcel;
 
 
-	public Video(String criterio, int numeroVideoRelacionados, String letra) {
+	public Video(String criterio, int numeroVideo, int numeroVideoRelacionados,String letra) {
 
 		this.criterio = criterio;
+		this.numeroVideo = numeroVideo;
 		this.numeroVideoRelacionados = numeroVideoRelacionados;
 		this.letra = letra;
 	}
 
-	public Video(String criterio, int numeroVideoRelacionados, String letra,String keywords) {
+	public Video(String criterio, int numeroVideo, int numeroVideoRelacionados, String letra,String keywords) {
 
 		this.criterio = criterio;
-		this.numeroVideoRelacionados = numeroVideoRelacionados;
+		this.numeroVideo = numeroVideo;
 		this.letra = letra;
+		this.numeroVideoRelacionados = numeroVideoRelacionados;
 		this.keywords = keywords;
+	}
+	
+	
+	
+
+	public Video(String criterio, int numeroVideo, int numeroVideoRelacionados, String keywords,
+			String datoSegundaColumnaExcel, String datoTerceraColumnaExcel, String datoCuartaColumnaExcel) {
+		
+		
+		this.criterio = criterio;
+		this.numeroVideo = numeroVideo;
+		this.numeroVideoRelacionados = numeroVideoRelacionados;
+		this.keywords = keywords;
+		this.datoSegundaColumnaExcel = datoSegundaColumnaExcel;
+		this.datoTerceraColumnaExcel = datoTerceraColumnaExcel;
+		this.datoCuartaColumnaExcel = datoCuartaColumnaExcel;
 	}
 
 	public String getCriterio() {
@@ -45,8 +67,8 @@ public class Video {
 	}
 
 
-	public int getNumeroVideoRelacionados() {
-		return numeroVideoRelacionados;
+	public int getNumeroVideo() {
+		return numeroVideo;
 	}
 
 
@@ -57,10 +79,28 @@ public class Video {
 	public String getKeywords() {
 		return keywords;
 	}
+	
+	
+
+	public String getDatoSegundaColumnaExcel() {
+		return datoSegundaColumnaExcel;
+	}
+
+	public String getDatoTerceraColumnaExcel() {
+		return datoTerceraColumnaExcel;
+	}
+
+	public String getDatoCuartaColumnaExcel() {
+		return datoCuartaColumnaExcel;
+	}
+	
+	public int getNumeroVideoRelacionados() {
+		return numeroVideoRelacionados;
+	}
 
 	@Override
 	public String toString() {
 
-		return "Criterio: " + criterio + " " +" Numero Videos: " + numeroVideoRelacionados;
+		return "Criterio: " + criterio + " " +" Numero Videos: " + numeroVideo;
 	}
 }

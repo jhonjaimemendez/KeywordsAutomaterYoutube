@@ -22,8 +22,8 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXTextField;
 import com.keywords.componentes.Utilidades;
+import com.keywords.controlador.KeywordAutocompleteController;
 
-import edu.keywords.controlador.KeywordAutocompleteController;
 import edu.keywords.modelo.Video;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
@@ -178,7 +178,7 @@ public class PrincipalController implements Initializable {
 				tArchivoSalida.requestFocus();
 
 			} else if (!tKeywords.getText().isEmpty()) {
-				
+
 				buscarPorKeywords(tKeywords.getText());
 
 			} else if (!tArchivo.getText().isEmpty()) {
@@ -274,8 +274,8 @@ public class PrincipalController implements Initializable {
 
 			public void handle(WorkerStateEvent t) {
 
-				getLogger().log(Level.SEVERE,  "Error al general el archivo csv");
-				mostrarAlerta(AlertType.ERROR, "Error al general el archivo csv");
+				getLogger().log(Level.SEVERE,  "Error al generar el archivo csv");
+				mostrarAlerta(AlertType.ERROR, "Error al generar el archivo csv");
 				limpiarFormulario();
 			}
 		});
@@ -307,19 +307,20 @@ public class PrincipalController implements Initializable {
 
 	private void buscarPorArchivo() throws Exception {
 
-		getKeywordAutocompleteController().iniciarSet();
-		
+
+
 		FileInputStream excelFile = new FileInputStream(new File(tArchivo.getText()));
 		final Workbook workbook = new XSSFWorkbook(excelFile);
 
 		final Sheet datatypeSheet = workbook.getSheetAt(0);
+		Float numeroELementos = new Float(datatypeSheet.getLastRowNum());
 
-		if (datatypeSheet.getLastRowNum() > 0) {
+		if (numeroELementos > 0) {
 
-			final Iterator<Row> iterator = datatypeSheet.iterator();
+			final Iterator<Row> iterator = datatypeSheet.rowIterator();
 
-			incremento = 1/27F;
-			valorProgressBar = incremento;
+			incremento = 1/numeroELementos;
+			valorProgressBar = 0;
 
 			task = new Task<Void>() {
 
@@ -329,57 +330,77 @@ public class PrincipalController implements Initializable {
 					List<Video> videos = new ArrayList<Video>();
 					numeroPalabrasProcesadas = 0;
 
+					Cell segundaCelda = null;
+					Cell cuartaCelda = null;
+					Cell terceraCelda = null;
+					
 					while (iterator.hasNext()) {
 
 						final Row currentRow = iterator.next();
 						numeroPalabrasProcesadas++;
-
+						
+						Iterator<Cell> cellIterator = currentRow.iterator();
+						
+						Cell primeraCela = cellIterator.next();
+						
 						if (currentRow.getRowNum( )> 0) {
+							
 
-							Iterator<Cell> cellIterator = currentRow.iterator();
-							Cell currentCell = cellIterator.next();
-
-
-							if (currentCell.getStringCellValue() != null && !currentCell.getStringCellValue().isEmpty()) {
+							if (primeraCela.getStringCellValue() != null && !primeraCela.getStringCellValue().isEmpty()) {
 
 								
-									final String keywords = currentCell.getStringCellValue();
-									
-									Platform.runLater(new Runnable() {
+								final String keywords = primeraCela.getStringCellValue();
 
-										public void run() {
+								Platform.runLater(new Runnable() {
 
-											valorProgressBar +=incremento;
-											pNumeroVideos.setProgress(valorProgressBar);
-											tKeywordsProcesada.setText(keywords);
-											tKeywordsFaltantes.setText("" + (currentRow.getRowNum() -1));
-											tKeywordsTotales.setText("" + numeroPalabrasProcesadas);
-											pNumeroVideos.setProgress(0);
+									public void run() {
 
-										}
-									});
-
-
-									try {
-
-										List<Video> video = getKeywordAutocompleteController().getVideoCriterio(getPalabrasSinTilde(currentCell.getStringCellValue()));
-										
-										videos.addAll(video);
-
-									} catch (Exception e) {
-
-										getLogger().log(Level.SEVERE,  "Error proceso generado por archivo" +e);
+										valorProgressBar +=incremento;
+										pNumeroVideos.setProgress(valorProgressBar);
+										tKeywordsProcesada.setText(keywords);
+										tKeywordsFaltantes.setText("" + (currentRow.getRowNum()));
+										tKeywordsTotales.setText(""+ numeroELementos.intValue());
 
 									}
+								});
+
+
+								try {
+
+									List<Video> video = getKeywordAutocompleteController().getVideoCriterioLibro(getPalabrasSinTilde(getValor(primeraCela)),
+											getValor(segundaCelda),getValor(terceraCelda),getValor(cuartaCelda));
+
+
+									videos.addAll(video);
+
+								} catch (Exception e) {
+
+									getLogger().log(Level.SEVERE,  "Error proceso generado por archivo" +e);
+
+								}
 
 							}
+						} else {
+	
+							try {
+								segundaCelda = cellIterator.next();
+							} catch (Exception e) {}
+
+							try {
+								terceraCelda = cellIterator.next();
+							} catch (Exception e) {}
+
+							try {
+								cuartaCelda = cellIterator.next();
+
+							} catch (Exception e) {}
+
+							
 						}
-
-
 					}
 
 					try {
-						Utilidades.escribirArchivoCSV(tCarpetaSalida.getText(), tArchivoSalida.getText() + "-PorArchivoKeywords", videos);
+						Utilidades.escribirArchivoCSVOpcionArchivo(tCarpetaSalida.getText(), tArchivoSalida.getText() + "-PorArchivoKeywords", videos);
 						workbook.close();
 
 					} catch (Exception e) {
@@ -485,8 +506,8 @@ public class PrincipalController implements Initializable {
 		if (keywordAutocompleteController == null)
 			keywordAutocompleteController = new KeywordAutocompleteController();
 
-		
-		
+
+
 		return keywordAutocompleteController;
 	}
 
@@ -504,6 +525,16 @@ public class PrincipalController implements Initializable {
 
 	}
 
+	private String getValor(Cell cell) {
+
+		String resultado = "";
+
+		try {
+			resultado = cell.getStringCellValue();
+		} catch (Exception e) {}
+
+		return resultado;
+	}
 
 
 }

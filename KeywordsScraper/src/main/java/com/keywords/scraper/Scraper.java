@@ -12,8 +12,10 @@
 
 package com.keywords.scraper;
 
+import static com.keywords.componentes.Utilidades.getLogger;
+import static com.keywords.componentes.Utilidades.getPalabras;
+
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -40,10 +42,7 @@ import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-
 import edu.keywords.modelo.ProxyAnonimo;
-import static com.keywords.componentes.Utilidades.getLogger;
-import static com.keywords.componentes.Utilidades.getPalabras;
 
 
 /**
@@ -77,10 +76,10 @@ public class Scraper {
 		Set<String> resultado = autocompleteResultsOpcionUno(keyword,letra);
 		Set<String> resultado1 = autocompleteResultsOpcionDos(keyword,letra);
 		Set<String> resultado2 = autocompleteResultsOpcionTres(keyword,letra);
-		
+
 		resultado.addAll(resultado1);
 		resultado.addAll(resultado2);
-		
+
 
 		return resultado;
 
@@ -174,7 +173,7 @@ public class Scraper {
 		try {
 
 			if (keyword.split(" ").length == 1) {
-			
+
 				resultado = getAutocompleteOpcionTres(driver, keyword, letra);
 			}
 
@@ -200,6 +199,7 @@ public class Scraper {
 			String keyword, String letra) throws Exception {
 
 		String keyWords ="input[id=keywordInput]";
+
 
 		driver.get("https://youautocompleteme.io/youtube/");
 
@@ -243,30 +243,52 @@ public class Scraper {
 	 * @return Número de videos filtrados
 	 * @throws IOException
 	 */
-	public static int getNumeroVideos(String criterio) throws IOException {
+	public static int[] getNumeroVideos(String criterio) throws IOException {
 
 		int resultado = 0;
-
-		String url   = "http://www.youtube.com/results";
+		String inputText ="input[name=search_query]";
+		
 		String query = "allintitle:\"" + criterio + "\"";
 
-		Document doc = Jsoup.connect(url)
-				.timeout(10000)
-				.data("search_query", query)
-				.userAgent("Mozilla/5.0")
-				.get();
+		System.setProperty("webdriver.chrome.driver","recursos/lib/chromedriver.exe");
+
+		driver.get("https://www.youtube.com/");
+		WebDriverWait wait = new WebDriverWait(driver, 10);
+		WebElement input = wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector(inputText)));
+
+		input.sendKeys(query);
+		new Actions(driver).moveToElement(input).perform();
+		driver.findElement(By.id("search-icon-legacy")).click();
+
+		wait.until(ExpectedConditions.elementToBeClickable(By.id("filter-menu")));
 
 
-		for (Element a : doc.select(".yt-lockup-title > a[title]")) {
+		String body = driver.findElement(By.tagName("body")).getText();
+		String textoBuscar = "vistas";
 
-			if (isCriterioContieneTodasPalabraTitulo(criterio, a.attr("title")))
+		int posicion = body.toLowerCase().indexOf("relacionados con tu búsqueda");
 
-				resultado++;
+		String resultadoVideo = body.substring(0, posicion>0 ? posicion : body.length());
 
 
+		int numeroVideo = contador(resultadoVideo,textoBuscar);
+		int numeroVideoRelacionados = (posicion > 0 ? contador(body.substring(posicion),textoBuscar) : 0);
+
+
+		return new int[] {numeroVideo,numeroVideoRelacionados};
+
+	}
+
+	private static int contador(String texto,String textoBuscar) {
+		int contador = 0;
+		
+		while (texto.indexOf(textoBuscar) > -1) {
+
+			texto = texto.substring(texto.indexOf(textoBuscar)+textoBuscar.length(),texto.length());
+			contador++; 
 		}
 
-		return resultado;
+		return contador;
 
 	}
 
@@ -281,12 +303,12 @@ public class Scraper {
 			int i = 0;
 
 			do {
-				
+
 				if (!getPalabras().contains(keywords[i])  
 						&& autocomplete.toLowerCase().contains(keywords[i]))
 
 					resultado = true;
-				
+
 				i++;
 
 			} while (i < keywords.length && !resultado);
@@ -309,7 +331,7 @@ public class Scraper {
 
 		do {
 
-			
+
 			if (!titulo.toLowerCase().contains(keywords[i]))
 
 				resultado = false;
@@ -317,8 +339,8 @@ public class Scraper {
 			else
 
 				i++;
-			
-			
+
+
 
 		} while (i < keywords.length && resultado);
 
@@ -373,9 +395,9 @@ public class Scraper {
 		return proxysAnonimos;
 
 	}
-	
+
 	public static void getKeywordNumeroConsultas(String search) throws Exception {
-		
+
 		String google = "http://www.google.com/search?q=";
 		String charset = "UTF-8";
 		String userAgent = "Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:47.0) Gecko/20100101 Firefox/47.0";
@@ -383,20 +405,20 @@ public class Scraper {
 		Elements links = Jsoup.connect(google + URLEncoder.encode(search, charset)).userAgent(userAgent).get().select(".g>.r>a");
 
 		for (Element link : links) {
-		    String title = link.text();
-		    String url = link.absUrl("href"); // Google returns URLs in format "http://www.google.com/url?q=<url>&sa=U&ei=<someKey>".
-		    url = URLDecoder.decode(url.substring(url.indexOf('=') + 1, url.indexOf('&')), "UTF-8");
+			String title = link.text();
+			String url = link.absUrl("href"); // Google returns URLs in format "http://www.google.com/url?q=<url>&sa=U&ei=<someKey>".
+			url = URLDecoder.decode(url.substring(url.indexOf('=') + 1, url.indexOf('&')), "UTF-8");
 
-		    if (!url.startsWith("http")) {
-		        continue; // Ads/news/etc.
-		    }
+			if (!url.startsWith("http")) {
+				continue; // Ads/news/etc.
+			}
 
-		    System.out.println("Title: " + title);
-		    System.out.println("URL: " + url);
+			System.out.println("Title: " + title);
+			System.out.println("URL: " + url);
 		}
-		
+
 	}
-	
+
 
 	public static Set<String>  buscarOpcionConProxyAnonimos(String palabra, String letra) {
 

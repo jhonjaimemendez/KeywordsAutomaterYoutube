@@ -9,7 +9,7 @@
  * Copyrigth: Luis Perez
  */
 
-package edu.keywords.controlador;
+package com.keywords.controlador;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -50,9 +50,9 @@ public class KeywordAutocompleteController {
 
 			if (autoCompleteSearch.add(resultado.toLowerCase())) {
 
-				int numeroVideoRelacionados = Scraper.getNumeroVideos(resultado);
+				int numeroVideoRelacionados[] = Scraper.getNumeroVideos(resultado);
 
-				Video video = new Video(resultado, numeroVideoRelacionados , letra,keyword);
+				Video video = new Video(resultado, numeroVideoRelacionados[0],numeroVideoRelacionados[1] , letra,keyword);
 				videos.add(video);
 
 			}
@@ -80,14 +80,14 @@ public class KeywordAutocompleteController {
 
 
 		resultadoAutocomplete.add(keyword);
-		
+
 		for (String resultado : resultadoAutocomplete) {
 
 			if (autoCompleteSearch.add(resultado.toLowerCase())) {
 
-				int numeroVideoRelacionados = Scraper.getNumeroVideos(resultado);
+				int numeroVideoRelacionados[] = Scraper.getNumeroVideos(resultado);
 
-				Video video = new Video(resultado, numeroVideoRelacionados , "",keyword);
+				Video video = new Video(resultado, numeroVideoRelacionados[0],numeroVideoRelacionados[1] , "",keyword);
 				videos.add(video);
 
 			}
@@ -98,6 +98,37 @@ public class KeywordAutocompleteController {
 		return videos;
 	}
 
+
+	/**
+	 * Metodo que obtiene los videos del keywords que llego
+	 * @param keyword: Criterio de busqueda
+	 * @return List con los datos de cada criterio y palabra
+	 * @throws Exception
+	 */
+	public List<Video> getVideoCriterioLibro(String keyword, String datoSegundaColumna, String datoTerceraColumna, String datoCuartaColumna) throws Exception {
+
+		List<Video> videos = new ArrayList<Video>();
+
+		Scraper.iniciarDrivers();
+
+		Set<String> resultadoAutocomplete = 
+				new HashSet<String>();
+
+		resultadoAutocomplete.add(keyword);
+
+		for (String resultado : resultadoAutocomplete) {
+
+			int numeroVideoRelacionados[] = Scraper.getNumeroVideos(resultado);
+
+			Video video = new Video(resultado, numeroVideoRelacionados[0],numeroVideoRelacionados[1] ,keyword,datoSegundaColumna,
+					datoTerceraColumna,datoCuartaColumna);
+			videos.add(video);
+
+		}
+
+
+		return videos;
+	}
 
 	public void iniciarSet() {
 

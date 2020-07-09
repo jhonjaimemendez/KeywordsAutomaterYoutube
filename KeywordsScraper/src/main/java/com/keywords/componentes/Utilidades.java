@@ -249,12 +249,38 @@ public class Utilidades {
 						StandardCharsets.UTF_8);
 				CSVWriter writer = new CSVWriter(osw)) {
 
-			String[] headerRecord = {"Keywords Original","Keywords Generadas", "Numero Videos"};
+			String[] headerRecord = {"Keywords Original","Keywords Generadas", "Numero Videos","Numero de videos relacionados"};
 			writer.writeNext(headerRecord);
 
 			for (Video video : videos) {
 
-				writer.writeNext(new String[] {video.getKeywords(),video.getCriterio(), "" + video.getNumeroVideoRelacionados()});
+				writer.writeNext(new String[] {video.getKeywords(),video.getCriterio(), "" + video.getNumeroVideo(), "" + video.getNumeroVideoRelacionados()});
+
+			}
+
+
+		}   
+
+	}
+	
+	
+	public static void escribirArchivoCSVOpcionArchivo(String ruta,String nombre, List<Video> videos) 
+			throws FileNotFoundException, IOException {
+
+		String nombreArchivo = ruta + File.separator + nombre + "-" + Utilidades.getFechaActual() +  ".csv";
+
+		try (FileOutputStream fos = new FileOutputStream(nombreArchivo);
+				OutputStreamWriter osw = new OutputStreamWriter(fos, 
+						StandardCharsets.UTF_8);
+				CSVWriter writer = new CSVWriter(osw)) {
+
+			String[] headerRecord = {"Keywords","Columna 2", "Columna 3","Columna 4","Numero Videos","Numero de videos relacionados"};
+			writer.writeNext(headerRecord);
+
+			for (Video video : videos) {
+
+				writer.writeNext(new String[] {video.getKeywords(),video.getDatoSegundaColumnaExcel(),video.getDatoTerceraColumnaExcel(),
+												video.getDatoCuartaColumnaExcel(),"" + video.getNumeroVideo(),"" + video.getNumeroVideoRelacionados()});
 
 			}
 
