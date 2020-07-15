@@ -264,7 +264,8 @@ public class Utilidades {
 	}
 	
 	
-	public static void escribirArchivoCSVOpcionArchivo(String ruta,String nombre, List<Video> videos) 
+	public static void escribirArchivoCSVOpcionArchivo(String ruta,String nombre, List<Video> videos, 
+			String primeraCelda, String segundaCelda, String terceraCelda, String cuartaCelda) 
 			throws FileNotFoundException, IOException {
 
 		String nombreArchivo = ruta + File.separator + nombre + "-" + Utilidades.getFechaActual() +  ".csv";
@@ -274,7 +275,7 @@ public class Utilidades {
 						StandardCharsets.UTF_8);
 				CSVWriter writer = new CSVWriter(osw)) {
 
-			String[] headerRecord = {"Keywords","Columna 2", "Columna 3","Columna 4","Numero Videos","Numero de videos relacionados"};
+			String[] headerRecord = {primeraCelda,segundaCelda, terceraCelda,cuartaCelda,"Numero Videos","Numero de videos relacionados"};
 			writer.writeNext(headerRecord);
 
 			for (Video video : videos) {

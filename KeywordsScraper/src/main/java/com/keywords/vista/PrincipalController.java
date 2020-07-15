@@ -14,9 +14,12 @@ import java.util.ResourceBundle;
 import java.util.logging.Level;
 
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.util.NumberToTextConverter;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import com.jfoenix.controls.JFXButton;
@@ -62,7 +65,7 @@ public class PrincipalController implements Initializable {
 	private int numeroPalabrasProcesadas;
 
 	private char letra;
-
+	
 
 	private static KeywordAutocompleteController keywordAutocompleteController;
 
@@ -307,8 +310,6 @@ public class PrincipalController implements Initializable {
 
 	private void buscarPorArchivo() throws Exception {
 
-
-
 		FileInputStream excelFile = new FileInputStream(new File(tArchivo.getText()));
 		final Workbook workbook = new XSSFWorkbook(excelFile);
 
@@ -329,7 +330,12 @@ public class PrincipalController implements Initializable {
 
 					List<Video> videos = new ArrayList<Video>();
 					numeroPalabrasProcesadas = 0;
-
+					
+					String encabezadoPrimeraCelda = "";
+					String encabezadoSegundaCelda = "";
+					String encabezadoTerceraCelda = "";
+					String encabezadoCuartaCelda = "";
+					
 					Cell segundaCelda = null;
 					Cell cuartaCelda = null;
 					Cell terceraCelda = null;
@@ -341,15 +347,32 @@ public class PrincipalController implements Initializable {
 						
 						Iterator<Cell> cellIterator = currentRow.iterator();
 						
-						Cell primeraCela = cellIterator.next();
+						Cell primeraCelda = cellIterator.next();
 						
 						if (currentRow.getRowNum( )> 0) {
+					
+							segundaCelda = null;
+							cuartaCelda = null;
+							terceraCelda = null;
 							
+							try {
+								segundaCelda = cellIterator.next();
+							} catch (Exception e) {}
 
-							if (primeraCela.getStringCellValue() != null && !primeraCela.getStringCellValue().isEmpty()) {
+							try {
+								terceraCelda = cellIterator.next();
+							} catch (Exception e) {}
+
+							try {
+								cuartaCelda = cellIterator.next();
+
+							} catch (Exception e) {}
+
+
+							if (primeraCelda.getStringCellValue() != null && !primeraCelda.getStringCellValue().isEmpty()) {
 
 								
-								final String keywords = primeraCela.getStringCellValue();
+								final String keywords = primeraCelda.getStringCellValue();
 
 								Platform.runLater(new Runnable() {
 
@@ -367,7 +390,7 @@ public class PrincipalController implements Initializable {
 
 								try {
 
-									List<Video> video = getKeywordAutocompleteController().getVideoCriterioLibro(getPalabrasSinTilde(getValor(primeraCela)),
+									List<Video> video = getKeywordAutocompleteController().getVideoCriterioLibro(getPalabrasSinTilde(getValor(primeraCelda)),
 											getValor(segundaCelda),getValor(terceraCelda),getValor(cuartaCelda));
 
 
@@ -382,17 +405,22 @@ public class PrincipalController implements Initializable {
 							}
 						} else {
 	
+							encabezadoPrimeraCelda = getValor(primeraCelda);
+							
 							try {
 								segundaCelda = cellIterator.next();
+								encabezadoSegundaCelda = getValor(segundaCelda);
+								
 							} catch (Exception e) {}
 
 							try {
 								terceraCelda = cellIterator.next();
+								encabezadoTerceraCelda = getValor(terceraCelda);
 							} catch (Exception e) {}
 
 							try {
 								cuartaCelda = cellIterator.next();
-
+								encabezadoCuartaCelda = getValor(cuartaCelda);
 							} catch (Exception e) {}
 
 							
@@ -400,7 +428,9 @@ public class PrincipalController implements Initializable {
 					}
 
 					try {
-						Utilidades.escribirArchivoCSVOpcionArchivo(tCarpetaSalida.getText(), tArchivoSalida.getText() + "-PorArchivoKeywords", videos);
+						Utilidades.escribirArchivoCSVOpcionArchivo(tCarpetaSalida.getText(), tArchivoSalida.getText() + "-PorArchivoKeywords", videos, 
+								encabezadoPrimeraCelda, encabezadoSegundaCelda, encabezadoTerceraCelda, encabezadoCuartaCelda);
+						
 						workbook.close();
 
 					} catch (Exception e) {
@@ -530,7 +560,10 @@ public class PrincipalController implements Initializable {
 		String resultado = "";
 
 		try {
-			resultado = cell.getStringCellValue();
+			
+			DataFormatter df = new DataFormatter();
+			resultado = df.formatCellValue(cell);
+			
 		} catch (Exception e) {}
 
 		return resultado;
